@@ -280,19 +280,24 @@ def get_config_variables():
 
     yield ConfigVariable(
         name="openslides_theme",
-        default_value="openslides-default-light-theme",
+        default_value="openslides-red-light-theme",
         input_type="choice",
         label="OpenSlides Theme",
         choices=(
             {
                 "value": "openslides-default-light-theme",
-                "display_name": "OpenSlides Default",
+                "display_name": "Openslides Default",
             },
             {
                 "value": "openslides-default-dark-theme",
                 "display_name": "OpenSlides Dark",
             },
-            {"value": "openslides-red-light-theme", "display_name": "OpenSlides Red"},
+            {   "value": "openslides-red-light-theme", 
+                "display_name": "OpenSlides Red"
+            },
+            {   "value": "openslides-dlrgred-light-theme", 
+                "display_name": "DLRG Dresden Default"
+            },
             {
                 "value": "openslides-red-dark-theme",
                 "display_name": "OpenSlides Red Dark",
@@ -398,7 +403,7 @@ def get_config_variables():
 
     yield ConfigVariable(
         name="logo_projector_main",
-        default_value={"display_name": "Projector logo", "path": ""},
+        default_value={"display_name": "Projector logo", "path": "assets/img/wortmarke-dlrg-dd-gelb.svg"},
         input_type="static",
         weight=301,
         group="Logo",
@@ -435,7 +440,7 @@ def get_config_variables():
 
     yield ConfigVariable(
         name="logo_pdf_header_R",
-        default_value={"display_name": "PDF header logo (right)", "path": ""},
+        default_value={"display_name": "PDF header logo (right)", "path": "assets/img/wortmarke-dlrg-dd-gelb.png"},
         input_type="static",
         weight=311,
         group="Logo",
