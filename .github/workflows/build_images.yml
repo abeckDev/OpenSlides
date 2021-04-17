@@ -39,6 +39,24 @@ jobs:
       - name: Log into registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
 
+      - name: Push proxy image
+        run: |
+          #Handle openslides-proxy
+          IMAGE_NAME=openslides-proxy
+          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/dlrgdd-$IMAGE_NAME
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          docker tag openslides/$IMAGE_NAME $IMAGE_ID:latest
+          docker push $IMAGE_ID:latest
+          
+      - name: Push autoupdate image
+        run: |
+          #Handle openslides-autoupdate
+          IMAGE_NAME=openslides-autoupdate
+          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/dlrgdd-$IMAGE_NAME
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          docker tag openslides/$IMAGE_NAME $IMAGE_ID:latest
+          docker push $IMAGE_ID:latest
+      
       - name: Push postfix images
         run: |
           #Handle openslides-postfix
