@@ -1,0 +1,96 @@
+name: Build Docker Images
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ master ]
+    paths: 
+      - server/*
+      - docker/*
+    
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+env:
+  IMAGE_NAME: dlrgddopenslides
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build_and_tag_images:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      # Runs a single command using the runners shell
+      - name: Run a one-line script
+        working-directory: docker/
+        run: ./build.sh all
+        
+      - name: List build images
+        run: docker image ls
+      
+      - name: Log into registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+
+      - name: Push postfix images
+        run: |
+          #Handle openslides-postfix
+          IMAGE_NAME=dlrgdd-openslides-postfix
+          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          docker tag openslides/$IMAGE_NAME $IMAGE_ID:latest
+          docker push $IMAGE_ID:latest
+      
+      - name: Push pgbouncer images
+        run: |
+          #Handle openslides-pgbouncer
+          IMAGE_NAME=dlrgdd-openslides-pgbouncer
+          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          docker tag openslides/$IMAGE_NAME $IMAGE_ID:latest
+          docker push $IMAGE_ID:latest
+          
+      
+      - name: Push server images
+        run: |
+          #Handle openslides-server
+          IMAGE_NAME=dlrgdd-openslides-server
+          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          docker tag openslides/$IMAGE_NAME $IMAGE_ID:latest
+          docker push $IMAGE_ID:latest
+          
+      
+      - name: Push media-service images
+        run: |
+          #Handle openslides-media-service
+          IMAGE_NAME=dlrgdd-openslides-media-service
+          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          docker tag openslides/$IMAGE_NAME $IMAGE_ID:latest
+          docker push $IMAGE_ID:latest
+          
+      
+      - name: Push client images
+        run: |
+          #Handle openslides-client
+          IMAGE_NAME=dlrgdd-openslides-client
+          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          docker tag openslides/$IMAGE_NAME $IMAGE_ID:latest
+          docker push $IMAGE_ID:latest
+          
+      
+      - name: Push repmgr images
+        run: |
+          #Handle openslides-repmgr
+          IMAGE_NAME=dlrgdd-openslides-repmgr
+          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          docker tag openslides/$IMAGE_NAME $IMAGE_ID:latest
+          docker push $IMAGE_ID:latest
