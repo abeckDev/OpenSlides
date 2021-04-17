@@ -71,7 +71,7 @@ jobs:
       - name: Push media-service images
         run: |
           #Handle openslides-media-service
-          IMAGE_NAME=openslides-media-service
+          IMAGE_NAME=openslides-media
           IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/dlrgdd-$IMAGE_NAME
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
           docker tag openslides/$IMAGE_NAME $IMAGE_ID:latest
