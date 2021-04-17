@@ -42,8 +42,8 @@ jobs:
       - name: Push postfix images
         run: |
           #Handle openslides-postfix
-          IMAGE_NAME=dlrgdd-openslides-postfix
-          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
+          IMAGE_NAME=openslides-postfix
+          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/dlrgdd-$IMAGE_NAME
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
           docker tag openslides/$IMAGE_NAME $IMAGE_ID:latest
           docker push $IMAGE_ID:latest
@@ -51,8 +51,8 @@ jobs:
       - name: Push pgbouncer images
         run: |
           #Handle openslides-pgbouncer
-          IMAGE_NAME=dlrgdd-openslides-pgbouncer
-          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
+          IMAGE_NAME=openslides-pgbouncer
+          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/dlrgdd-$IMAGE_NAME
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
           docker tag openslides/$IMAGE_NAME $IMAGE_ID:latest
           docker push $IMAGE_ID:latest
@@ -61,8 +61,8 @@ jobs:
       - name: Push server images
         run: |
           #Handle openslides-server
-          IMAGE_NAME=dlrgdd-openslides-server
-          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
+          IMAGE_NAME=openslides-server
+          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/dlrgdd-$IMAGE_NAME
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
           docker tag openslides/$IMAGE_NAME $IMAGE_ID:latest
           docker push $IMAGE_ID:latest
@@ -71,8 +71,8 @@ jobs:
       - name: Push media-service images
         run: |
           #Handle openslides-media-service
-          IMAGE_NAME=dlrgdd-openslides-media-service
-          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
+          IMAGE_NAME=openslides-media-service
+          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/dlrgdd-$IMAGE_NAME
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
           docker tag openslides/$IMAGE_NAME $IMAGE_ID:latest
           docker push $IMAGE_ID:latest
@@ -81,8 +81,8 @@ jobs:
       - name: Push client images
         run: |
           #Handle openslides-client
-          IMAGE_NAME=dlrgdd-openslides-client
-          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
+          IMAGE_NAME=openslides-client
+          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/dlrgdd-$IMAGE_NAME
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
           docker tag openslides/$IMAGE_NAME $IMAGE_ID:latest
           docker push $IMAGE_ID:latest
@@ -91,8 +91,8 @@ jobs:
       - name: Push repmgr images
         run: |
           #Handle openslides-repmgr
-          IMAGE_NAME=dlrgdd-openslides-repmgr
-          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
+          IMAGE_NAME=openslides-repmgr
+          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/dlrgdd-$IMAGE_NAME
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
           docker tag openslides/$IMAGE_NAME $IMAGE_ID:latest
           docker push $IMAGE_ID:latest
