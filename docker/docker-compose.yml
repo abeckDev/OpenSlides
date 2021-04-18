@@ -1,0 +1,193 @@
+# This configuration was created from a template file.  Before making changes,
+# please make sure that you do not have a process in place that would override
+# your changes in the future.  The accompanying .env file might be the correct
+# place for customizations instead.
+version: '3.4'
+
+x-osserver:
+  &default-osserver
+  image: docker.pkg.github.com/abeckdev/openslides-dlrgdd/dlrgdd-openslides-server:latest
+  networks:
+    - back
+  restart: always
+x-osserver-env: &default-osserver-env
+    AUTOUPDATE_DELAY: 1
+    DEMO_USERS: ""
+    CONNECTION_POOL_LIMIT: 100
+    DATABASE_HOST: "pgbouncer"
+    DATABASE_PASSWORD: "openslides"
+    DATABASE_PORT: 5432
+    DATABASE_USER: "openslides"
+    DEFAULT_FROM_EMAIL: "online-dienste@dresden.dlrg.de"
+    EMAIL_HOST: "postfix"
+    EMAIL_HOST_PASSWORD: ""
+    EMAIL_HOST_USER: ""
+    EMAIL_PORT: 25
+    EMAIL_USE_SSL: ""
+    EMAIL_USE_TLS: ""
+    EMAIL_TIMEOUT: ""
+    ENABLE_ELECTRONIC_VOTING: "True"
+    ENABLE_CHAT: "False"
+    ENABLE_SAML: "False"
+    INSTANCE_DOMAIN: "https://jahreshauptversammlung.dlrg-dresden.net"
+    JITSI_DOMAIN: ""
+    JITSI_ROOM_PASSWORD: ""
+    JITSI_ROOM_NAME: ""
+    OPENSLIDES_LOG_LEVEL: "INFO"
+    DJANGO_LOG_LEVEL: "INFO"
+    REDIS_HOST: "redis"
+    REDIS_PORT: 6379
+    REDIS_SLAVE_HOST: "redis-slave"
+    REDIS_SLAVE_PORT: 6379
+    SERVER_SETUP_HOST: "server-setup"
+    SERVER_SETUP_PORT: 8000
+    RESET_PASSWORD_VERBOSE_ERRORS: "False"
+x-pgnode: &default-pgnode
+  image: docker.pkg.github.com/abeckdev/openslides-dlrgdd/dlrgdd-openslides-repmgr:latest
+  networks:
+    - dbnet
+  labels:
+    org.openslides.role: "postgres"
+  restart: always
+x-pgnode-env: &default-pgnode-env
+  REPMGR_RECONNECT_ATTEMPTS: 30
+  REPMGR_RECONNECT_INTERVAL: 10
+  REPMGR_WAL_ARCHIVE: "on"
+
+services:
+  proxy:
+    image: docker.pkg.github.com/abeckdev/openslides-dlrgdd/dlrgdd-openslides-proxy:latest
+    depends_on:
+      - server
+      - client
+      - autoupdate
+      - media
+    networks:
+      - front
+      - back
+    ports:
+      - "127.0.0.1:8000:8000"
+
+  server:
+    << : *default-osserver
+    depends_on:
+      - server-setup
+    environment:
+      << : *default-osserver-env
+    secrets:
+      - django
+
+
+
+  server-setup:
+    << : *default-osserver
+    entrypoint: /usr/local/sbin/entrypoint-db-setup
+    environment:
+      << : *default-osserver-env
+    secrets:
+      - django
+      - os_admin
+
+
+    depends_on:
+      - pgbouncer
+      - redis
+      - redis-slave
+
+  client:
+    image: docker.pkg.github.com/abeckdev/openslides-dlrgdd/dlrgdd-openslides-client:latest
+    restart: always
+    networks:
+      - back
+
+  autoupdate:
+    image: docker.pkg.github.com/abeckdev/openslides-dlrgdd/dlrgdd-openslides-autoupdate:latest
+    restart: always
+    depends_on:
+      - redis
+      - server
+    secrets:
+      - django
+    environment:
+      REDIS_WRITE_HOST: redis
+      MESSAGE_BUS_HOST: redis-slave
+    networks:
+      - back
+
+  pgnode1:
+    << : *default-pgnode
+    environment:
+      << : *default-pgnode-env
+      REPMGR_NODE_ID: 1
+      REPMGR_PRIMARY: # This is the primary
+    volumes:
+      - "dbdata1:/var/lib/postgresql"
+
+
+
+  pgbouncer:
+    environment:
+      - PG_NODE_LIST=pgnode1
+    image: docker.pkg.github.com/abeckdev/openslides-dlrgdd/dlrgdd-openslides-pgbouncer:latest
+    restart: always
+    networks:
+      back:
+        aliases:
+          - db
+          - postgres
+      dbnet:
+  postfix:
+    image: docker.pkg.github.com/abeckdev/openslides-dlrgdd/dlrgdd-openslides-postfix:latest
+    restart: always
+    environment:
+      MYHOSTNAME: "localhost"
+      RELAYHOST: "localhost"
+    networks:
+      - back
+  redis:
+    image: redis:alpine
+    restart: always
+    networks:
+      - back
+  redis-slave:
+    image: redis:alpine
+    restart: always
+    command: ["redis-server", "--save", "", "--slaveof", "redis", "6379"]
+    depends_on:
+      - redis
+    networks:
+      - back
+
+  media:
+    image: docker.pkg.github.com/abeckdev/openslides-dlrgdd/dlrgdd-openslides-media:latest
+    environment:
+      - CHECK_REQUEST_URL=server:8000/check-media/
+      - CACHE_SIZE=10
+      - CACHE_DATA_MIN_SIZE_KB=0
+      - CACHE_DATA_MAX_SIZE_KB=10240
+    restart: always
+    networks:
+      - back
+    # Override command to run more workers per task
+    # command: ["gunicorn", "-w", "4", "--preload", "-b",
+    #   "0.0.0.0:8000", "src.mediaserver:app"]
+
+volumes:
+  dbdata1:
+
+
+
+networks:
+  front:
+  back:
+  dbnet:
+
+secrets:
+  django:
+    file: ./secrets/django.env
+  os_admin:
+    file: ./secrets/adminsecret.env
+
+
+
+# vim: set sw=2 et:
