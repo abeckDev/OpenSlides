@@ -293,10 +293,7 @@ def get_config_variables():
                 "display_name": "OpenSlides Dark",
             },
             {   "value": "openslides-red-light-theme", 
-                "display_name": "OpenSlides Red"
-            },
-            {   "value": "openslides-dlrgred-light-theme", 
-                "display_name": "DLRG Dresden Default"
+                "display_name": "DLRG Dresden default"
             },
             {
                 "value": "openslides-red-dark-theme",
