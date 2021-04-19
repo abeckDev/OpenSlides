@@ -635,7 +635,7 @@ msgid "Cancel editing without saving"
 msgstr "Bearbeitung ohne Speichern abbrechen"
 
 msgid "Candidates"
-msgstr "Kandidat*innen"
+msgstr "Kandidaten"
 
 msgid "Cannot create PDF files on this browser."
 msgstr "In diesem Browser können keine PDF-Dateien erstellt werden."
@@ -2014,7 +2014,7 @@ msgid "Notes"
 msgstr "Notizen"
 
 msgid "Number candidates"
-msgstr "Kandidat*innen nummerieren"
+msgstr "Kandidaten nummerieren"
 
 msgid "Number motions"
 msgstr "Anträge nummerieren"
